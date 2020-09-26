@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from '@apollo/react-hooks';
-import { useStoreContext } from "../utils/GlobalState";
+// import { useStoreContext } from "../utils/GlobalState";
 import {
   REMOVE_FROM_CART,
   UPDATE_CART_QUANTITY,
   ADD_TO_CART,
   UPDATE_PRODUCTS,
-} from '../utils/actions';
+} from "../utils/actions";
 import { QUERY_PRODUCTS } from "../utils/queries";
-import spinner from '../assets/spinner.gif'
+import { idbPromise } from "../utils/helpers";
 import Cart from '../components/Cart';
-import { idbPromise } from '../utils/helpers';
+import spinner from '../assets/spinner.gif'
+import { useSelector, useDispatch } from 'react-redux';
 
 function Detail() {
-  const [state, dispatch] = useStoreContext();
+  // const [state, dispatch] = useStoreContext();
+  //use the redux useSelecter and useDispatch as the state and dispatch vairables
+  const state = useSelector(state => state);
+  const dispatch = useDispatch();
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({})
@@ -23,6 +27,33 @@ function Detail() {
 
   const { products, cart } = state;
 
+  useEffect(() => {
+    // already in global store
+    if (products.length) {
+      setCurrentProduct(products.find(product => product._id === id));
+      // retrieved from server
+    } else if (data) {
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: data.products
+      });
+
+      data.products.forEach((product) => {
+        idbPromise('products', 'put', product);
+      });
+    }
+    // get cache from idb
+    else if (!loading) {
+      // since we're offline, get all of the data from the `products` store
+      idbPromise('products', 'get').then((indexedProducts) => {
+        // use retrieved data to set global state for offline browsing
+        dispatch({
+          type: UPDATE_PRODUCTS,
+          products: indexedProducts
+        });
+      });
+    }
+  }, [products, data, loading, dispatch, id]);
 
   const addToCart = () => {
     const itemInCart = cart.find((cartItem) => cartItem._id === id)
@@ -53,37 +84,9 @@ function Detail() {
       type: REMOVE_FROM_CART,
       _id: currentProduct._id
     });
-
     // upon removal from cart, delete the item from IndexedDB using the `currentProduct._id` to locate what to remove
     idbPromise('cart', 'delete', { ...currentProduct });
   };
-
-  useEffect(() => {
-    // already in global store
-    if (products.length) {
-      setCurrentProduct(products.find(product => product._id === id));
-    }
-    // retrieved from server
-    else if (data) {
-      dispatch({
-        type: UPDATE_PRODUCTS,
-        products: data.products
-      });
-
-      data.products.forEach((product) => {
-        idbPromise('products', 'put', product);
-      });
-    }
-    // get cache from idb
-    else if (!loading) {
-      idbPromise('products', 'get').then((indexedProducts) => {
-        dispatch({
-          type: UPDATE_PRODUCTS,
-          products: indexedProducts
-        });
-      });
-    }
-  }, [products, data, loading, dispatch, id]);
 
   return (
     <>
@@ -108,8 +111,7 @@ function Detail() {
             </button>
             <button
               disabled={!cart.find(p => p._id === currentProduct._id)}
-              onClick={removeFromCart}
-            >
+              onClick={removeFromCart}>
               Remove from Cart
             </button>
           </p>
