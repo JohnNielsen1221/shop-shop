@@ -28,17 +28,18 @@ You may also test the app through the Heroku link listed in the links section.
 Additionally, since this is a PWA, supported browsers will allow you to install the program as an App. After loading the page in a browser, you should see a + inside of a circle on the right side of the address bar. Click on this and follow the prompts to install the program as a local App.
 
 ## Functionality
-This is a basic eCommerce website that uses Stripe to collect your credit card information. You are able to view the items as a page, or view each individual item by clicking on them. You can then add them to your cart. You are also able to remove items from your cart by either clicking on the "Remove Items" button on an individual items page or clicking the trash icon in your cart. You can also manually change the item number in your cart.
+This is a basic eCommerce website that uses Stripe to collect your credit card information. You are able to view the items as a page, or view each individual item by clicking on them. If you have created a login, you can then add them to your cart. You are also able to remove items from your cart by either clicking on the "Remove Items" button on an individual items page or clicking the trash icon in your cart. You can also manually change the item number in your cart.
 
 ## Screenshots
-![Budget Home](budget-tracker-ss.png)
+![Shop Home](shop-ss-1.png)
+![Shop Single Item](shop-ss-2.png)
 
 ## Status
 Project is: _complete_ (for now)
 
 ## Links
- - Respository Link - https://github.com/JohnNielsen1221/budget-tracker
- - Heroku Link - https://calm-gorge-84926.herokuapp.com/
+ - Respository Link - https://github.com/JohnNielsen1221/shop-shop
+ - Heroku Link - https://afternoon-dusk-67639.herokuapp.com/
 
 ## License
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
